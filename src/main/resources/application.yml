@@ -13,3 +13,7 @@ spring:
     password: user_password
     url: r2dbc:postgresql://localhost:5432/chat_db
     username: chat_user
+
+server:
+  error:
+    include-message: always

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -181,7 +180,6 @@ public class UserControllerTest {
                 .get()
                 .uri("/api/users/" + NON_EXISTENT_USER_ID)
                 .exchange()
-                .expectStatus().isNotFound()
                 .expectBody()
                 .jsonPath("$.message").isNotEmpty()
                 .jsonPath("$.message").isEqualTo(
@@ -223,7 +221,6 @@ public class UserControllerTest {
                         .password("password")
                         .build()), User.class)
                 .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_ACCEPTABLE)
                 .expectBody()
                 .jsonPath("$.message").isNotEmpty()
                 .jsonPath("$.message").isEqualTo("User \"user\" already exists");
