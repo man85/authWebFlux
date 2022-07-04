@@ -1,6 +1,7 @@
-package com.reactive.authWebFlux.controller;
+package com.reactive.authWebFlux.webApi;
 
 import com.reactive.authWebFlux.config.MapperConfig;
+import com.reactive.authWebFlux.config.RoutesConfig;
 import com.reactive.authWebFlux.config.WebSecurityConfig;
 import com.reactive.authWebFlux.domain.User;
 import com.reactive.authWebFlux.dto.TestUserDto;
@@ -35,10 +36,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 @ExtendWith(SpringExtension.class)
-@WebFluxTest(controllers = UserController.class)
+@WebFluxTest(controllers = RoutesConfig.class)
 @Import({UserService.class, MapperConfig.class, WebSecurityConfig.class,
         GlobalErrorWebExceptionHandler.class, GlobalErrorAttributes.class})
-public class UserControllerTest {
+public class WebApiTest {
 
     private static final Integer USER_TEST_COUNT = 10;
     private static final Long NON_EXISTENT_USER_ID = 0L;
