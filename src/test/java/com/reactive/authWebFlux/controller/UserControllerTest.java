@@ -5,6 +5,8 @@ import com.reactive.authWebFlux.config.WebSecurityConfig;
 import com.reactive.authWebFlux.domain.User;
 import com.reactive.authWebFlux.dto.TestUserDto;
 import com.reactive.authWebFlux.dto.UserDto;
+import com.reactive.authWebFlux.errorhandling.GlobalErrorAttributes;
+import com.reactive.authWebFlux.errorhandling.GlobalErrorWebExceptionHandler;
 import com.reactive.authWebFlux.repository.UserRepository;
 import com.reactive.authWebFlux.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -33,7 +36,8 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = UserController.class)
-@Import({UserService.class, MapperConfig.class, WebSecurityConfig.class})
+@Import({UserService.class, MapperConfig.class, WebSecurityConfig.class,
+        GlobalErrorWebExceptionHandler.class, GlobalErrorAttributes.class})
 public class UserControllerTest {
 
     private static final Integer USER_TEST_COUNT = 10;
@@ -180,10 +184,13 @@ public class UserControllerTest {
                 .get()
                 .uri("/api/users/" + NON_EXISTENT_USER_ID)
                 .exchange()
+                .expectStatus().isNotFound()
                 .expectBody()
                 .jsonPath("$.message").isNotEmpty()
                 .jsonPath("$.message").isEqualTo(
-                        "User not found for id=" + NON_EXISTENT_USER_ID);
+                        "User not found for id=" + NON_EXISTENT_USER_ID)
+                .jsonPath("$.status").isNotEmpty()
+                .jsonPath("$.status").isEqualTo("404");
     }
 
     @Test
@@ -221,9 +228,13 @@ public class UserControllerTest {
                         .password("password")
                         .build()), User.class)
                 .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_ACCEPTABLE)
                 .expectBody()
                 .jsonPath("$.message").isNotEmpty()
-                .jsonPath("$.message").isEqualTo("User \"user\" already exists");
+                .jsonPath("$.message").isEqualTo("User \"user\" already exists")
+                .jsonPath("$.status").isNotEmpty()
+                .jsonPath("$.status").isEqualTo("406");
+
     }
 
     @Test
