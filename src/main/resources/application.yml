@@ -1,0 +1,15 @@
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          r2dbc: DEBUG
+spring:
+  flyway:
+    url: jdbc:postgresql://localhost:5432/chat_db
+    user: chat_user
+    password: user_password
+  r2dbc:
+    password: user_password
+    url: r2dbc:postgresql://localhost:5432/chat_db
+    username: chat_user
